@@ -1,0 +1,230 @@
+//
+//
+//
+//-------------------------------------------------------
+// - - - * * * Section 23: Make a Secret-Message
+Sharing App * * * - - -
+//
+
+// @ @ @ - - - 302. Application Overview - - - @ @ @
+
+Intro on what we are making
+
+
+
+// @ @ @ - - - 303. Project Setup - - - @ @ @
+
+Created index.js
+and index.html
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" />
+
+
+// @ @ @ - - - 304. Handling form Submission - - - @ @ @
+
+index.html
+Added: 
+	<div class="row">
+		<div class="col s8 offset-s2">
+			<div class=""card-panel>
+				<form>
+					<label>Enter a Secret Message</label>
+					<input />
+					<button class="btn">Create</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+indes.js
+Added:
+
+	document.querySelector('form').addEventListener('submit', event => {
+		event.preventDefault();
+	});
+
+
+
+// @ @ @ - - - 305. Base64 Encoding - - - @ @ @
+
+
+ASCII Character Codes
+	The characters "a-z", "A-Z", "0-9", "!@#$%^&*()" and a few others can
+	be represented with a decimal value 0 to 127
+
+Base64 character codes
+	The characters "a-z", "A-Z", "0-9" can be represented with a decimal value from 0 to 63
+
+					   +---+			+---+			+---+
+ASCII char 		   | s |			| e | 		| c |
+					   +---+			+---+			+---+
+						  |	  		  |			  |
+						  V 			  V			  V
+					   +---+  		+---+			+---+
+ASCII Codes		   |115|	 		|101|			| 99|
+					   +---+   		+---+			+---+
+						  |			  |			  |
+						  V 			  V 			  V
+8 digit binary	+---------+	+---------+ +---------+
+rep of	 		| 01110011| | 01100101| | 01100011|
+character code	+---------+ +---------+ +---------+
+						  |			  |			  |
+						  +-----------+-----------+
+						  				  |
+						  				  V
+All 24			+---------------------------------+
+chars joined	| 		011100110110010101100011	 |
+together			+----------------+----------------+
+										  |
+							+------+---+---+------+
+							|		 |	   	|		 |
+							V 		 V       V      V
+						+------+------+------+------+
+Groups of  			|011100|110110|010101|100011|
+6 characters 		+--+---+--+---+---+--+---+--+
+							|		 |	   	|		 |
+							V 		 V       V      V
+						 +---+  +---+   +---+  +---+ 
+Groups of  			 | c |  | 2 |   | V |  | J |
+6 characters 		 +-+-+  +-+-+   +-+-+  +-+-+
+							|		 |			|		 |
+							+------+---+---+------+ 		 
+										  |
+						  				  V
+						+------+------+------+------+
+Join chars 			|				c2Vj				 |
+together		 		+------+------+------+------+						  				  
+
+// @ @ @ - - - 306. Encoding the Entered Sting - - - @ @ @
+
+btoa('sec');
+"c2Vj"
+atob('c2Vj');
+"sec"
+
+
+index.html
+
+Added: 
+	<div>
+		Share this link with a friend
+		<input id="link-input" />
+	</div>
+
+Changed:
+	<input /> to: <input id="message-input" />
+
+index.js
+Added:
+	const encrypted = btoa(input.value);
+
+	document.querySelector('#link-input').value = encrypted;
+
+
+
+// @ @ @ - - - 307. Parts of a URL - - - @ @ @
+
+
+~Domain~			~Path~			~Query String~		~Hash/fragment
+
+message.com 	/index.html/ 	?color=red			#value
+										
+										{color: 'red'}	
+
+
+
+
+// @ @ @ - - - 308. Generating the URL - - - @ @ @
+
+`${window.location}`
+
+index.js
+Changed to: 
+	document.querySelector('#link-input').value = `${window.location}#${encrypted}`;
+
+Changed to: 
+	const linkInput = document.querySelector('#link-input');
+	linkInput.value = `${window.location}#${encrypted}`;
+	linkInput.select();
+
+
+
+// @ @ @ - - - 309. Toggling Element Visibility - - - @ @ @
+
+index.html
+Changed:
+
+	<div>
+		Share this link with a friend
+		<input id="link-input" />
+	</div>
+To: 
+	<div id="link-form" class="card-panel hide">
+		<div>
+			Share this link with a friend
+			<input id="link-input" />
+		</div>
+	</div>
+
+Also added id="message-form" to other card-panel
+
+index.js
+Added:
+	document.querySelector('#message-form').classList.add('hide');
+	document.querySelector('#link-form').classList.remove('hide');
+
+
+
+index.html
+Added: 
+	<style>
+		.row {
+			margin-top: 25vh;
+		}
+	</style>
+
+// @ @ @ - - - 310. Decoding the Message - - - @ @ @
+
+added:
+	const { hash } = window.location;
+
+	console.log(atob(hash.replace('#', '')));
+
+
+// @ @ @ - - - 311. Deisplaying the Message - - - @ @ @
+
+index.html added:
+	<div id="message-show" class="card-panel hide">
+		<h1></h1>
+		<div>
+			<a href="./index.html">Create your own secret message</a>
+		</div>
+	</div>
+
+index.js
+Changed console.log to:
+	const message = atob(hash.replace('#', ''));
+
+Added:
+
+	if (message) {
+		document.querySelector('#message-form').classList.add('hide');
+		document.querySelector('#message-show').classList.remove('hide');
+
+		document.querySelector('h1').innerHTML = message;
+	}
+
+index.html added:
+	h1 {
+		margin-top: 0;
+	}
+
+// @ @ @ - - - 312. App Deployment - - - @ @ @
+
+
+
+
+
+
+
+
